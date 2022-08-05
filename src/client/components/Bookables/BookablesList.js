@@ -1,6 +1,6 @@
 import React from "react";
 import data from "../../static.json";
-import { useState } from "react";
+import { useState,Fragment } from "react";
 import {FaArrowRight} from "react-icons/fa";
 
 
@@ -10,7 +10,8 @@ export default function BookablesList(){
     const bookablesInGroup=bookables.filter(b=>b.group===group);
     const [bookableIndex,setBookableIndex]=useState(0);
     const groups = [...new Set(bookables.map(b => b.group))];
-
+    const bookable = bookablesInGroup[bookableIndex];
+    const [hasDetails, setHasDetails] = useState(false);
 
     function changeBookable(selectedIndex){
         setBookableIndex(selectedIndex);
