@@ -23,7 +23,7 @@ export default function BookablesList(){
 
     return(
         <Fragment>
-            <div>
+        <div>
             <select value={group} onChange={(e) => setGroup(e.target.value)}>
                 {groups.map(g => <option value={g} key={g}>{g}</option>)}
             </select>
@@ -45,7 +45,7 @@ export default function BookablesList(){
         </div>
         {
             bookable && (
-                <div className="book-details">
+                <div className="booking-details">
                     <div className="item">
                         <div className="item-header">
                             <h2>
