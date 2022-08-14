@@ -1,15 +1,25 @@
 import React from "react";
 import data from "../../static.json";
-import { useState,Fragment } from "react";
+import { useState,useReducer,Fragment } from "react";
+import reducer from "./reducer";
+
+const initialState = {
+    userIndex:0
+  };
 
 export default function UsersPage () {
     
     const users = data.users;
-    const [userIndex,setUserIndex]=useState(0);
+    //const [userIndex,setUserIndex]=useState(0);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const {userIndex}=state;
     const user = users[userIndex];
 
     function changeUserIndex(selectedIndex){
-        setUserIndex(selectedIndex);
+        dispatch({
+            type: "SET_USER",
+            payload: selectedIndex
+          });
         console.log(selectedIndex);
     }
 
