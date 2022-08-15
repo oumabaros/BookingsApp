@@ -1,7 +1,7 @@
-import {useReducer, Fragment} from 'react';
+import React, {useReducer, Fragment} from 'react';
 import data from '../../static.json';
 import {FaArrowRight} from "react-icons/fa";
-import * as React from 'react';
+
 import reducer from "./reducer";
 
 let bookables=data.bookables,sessions=data.sessions,days=data.days;
