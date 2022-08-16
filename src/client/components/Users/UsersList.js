@@ -8,9 +8,12 @@ export default function UsersList () {
     const user = users?.[userIndex];
 
     useEffect(() => {
-        fetch("http://localhost:3001/users")
-        .then(resp => resp.json())
-        .then(data => setUsers(data));
+        async function getUsers() {
+            const resp = await fetch("http://localhost:3001/users");
+            const data = await (resp.json());
+            setUsers(data);
+            }
+            getUsers();
     }, []);
 
     if (users === null) {
