@@ -16,7 +16,7 @@ export default function UsersList () {
     const {users, isLoading, error,userIndex} = state;
     //const user = users?.[userIndex];
     const user = users[userIndex];
-    
+
     useEffect(
         ()=>{
                 dispatch({type: "FETCH_USERS_REQUEST"});

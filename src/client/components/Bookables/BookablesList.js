@@ -1,4 +1,4 @@
-import React, {useReducer, Fragment,useEffect} from 'react';
+import React, {useReducer, Fragment,useEffect,useRef} from 'react';
 import data from '../../static.json';
 import {FaArrowRight} from "react-icons/fa";
 import Spinner from '../UI/Spinner';
@@ -24,7 +24,9 @@ export default function BookablesList () {
   const bookablesInGroup = bookables.filter(b => b.group === group);
   const bookable = bookablesInGroup[bookableIndex];
   const groups = [...new Set(bookables.map(b => b.group))];
-  
+  const timerRef = useRef(null);
+  const nextButtonRef = useRef();
+
   useEffect(
     ()=>{
             dispatch({type: "FETCH_BOOKABLES_REQUEST"});
@@ -37,6 +39,17 @@ export default function BookablesList () {
             }));
         },[]
     );
+  
+    useEffect(() => {
+        timerRef.current = setInterval(() => {
+        dispatch({ type: "NEXT_BOOKABLE" });
+        }, 3000);
+        return stopPresentation;
+    }, []);
+  
+    function stopPresentation () {
+        clearInterval(timerRef.current);
+    }
 
   function changeGroup (e) {
     dispatch({
@@ -50,6 +63,7 @@ export default function BookablesList () {
       type: "SET_BOOKABLE",
       payload: selectedIndex
     });
+    nextButtonRef.current.focus();
   }
 
   function nextBookable () {
@@ -67,7 +81,7 @@ export default function BookablesList () {
   if(isLoading){
     return <p><Spinner/> Loading bookables...</p>
   }
-  
+
   return (
     <Fragment>
       <div>
@@ -97,6 +111,7 @@ export default function BookablesList () {
           <button
             className="btn"
             onClick={nextBookable}
+            ref={nextButtonRef}
             autoFocus
           >
             <FaArrowRight/>
@@ -121,6 +136,9 @@ export default function BookablesList () {
                   />
                   Show Details
                 </label>
+                <button className="btn" onClick={stopPresentation}>
+                    Stop
+                </button>
               </span>
             </div>
 
