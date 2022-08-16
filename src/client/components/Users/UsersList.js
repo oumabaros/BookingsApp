@@ -1,32 +1,56 @@
 import React from "react";
-import { useState,Fragment,useEffect } from "react";
+import { useState,Fragment,useEffect,useReducer } from "react";
 import Spinner from "../UI/Spinner";
+import reducer from "./reducer";
+import getData from '../../utils/api';
+
+const initialState={
+    users:[],
+    isLoading:true,
+    error:false,
+    userIndex:0
+};
 
 export default function UsersList () {
-    const [users, setUsers] = useState(null);
-    const [userIndex, setUserIndex] = useState(0);
-    const user = users?.[userIndex];
-
-    useEffect(() => {
-        async function getUsers() {
-            const resp = await fetch("http://localhost:3001/users");
-            const data = await (resp.json());
-            setUsers(data);
-            }
-            getUsers();
-    }, []);
-
-    if (users === null) {
-        return <Spinner/>
-    }
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const {users, isLoading, error,userIndex} = state;
+    //const user = users?.[userIndex];
+    const user = users[userIndex];
     
+    useEffect(
+        ()=>{
+                dispatch({type: "FETCH_USERS_REQUEST"});
+                getData("http://localhost:3001/users").then(users => dispatch({
+                    type: "FETCH_USERS_SUCCESS",
+                    payload: users
+                })).catch(error => dispatch({
+                    type: "FETCH_USERS_ERROR",
+                    payload: error
+                }));
+            },[]
+        );
+
+        if (error) {
+            return <p>{error.message}</p>
+        }
+        
+        if(isLoading){
+            return <p><Spinner/> Loading users...</p>
+        }
+
+        function changeUserIndex (userIndex) {
+            dispatch({
+              type: "SET_USER",
+              payload: userIndex
+            });
+          }
     return (
     <Fragment>
        <div>
        <ul className="bookables items-list-nav">
             {users.map((u,i)=>(
                 <li key={u.id} className={i === userIndex ? "selected" : null}>
-                    <button className="btn" onClick={() => setUserIndex(i)}>
+                    <button className="btn" onClick={() => changeUserIndex(i)}>
                         {u.name}
                     </button>
                 </li>
