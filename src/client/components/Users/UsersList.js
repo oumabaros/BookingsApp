@@ -1,79 +1,50 @@
-import React from "react";
-import { useState,Fragment,useEffect,useReducer } from "react";
+import React,{useState, useEffect} from 'react';
 import Spinner from "../UI/Spinner";
-import reducer from "./reducer";
-import getData from '../../utils/api';
+import getData from "../../utils/api";
 
-const initialState={
-    users:[],
-    isLoading:true,
-    error:false,
-    userIndex:0
-};
+export default function UsersList ({user, setUser}) {
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState(null);
 
-export default function UsersList () {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const {users, isLoading, error,userIndex} = state;
-    //const user = users?.[userIndex];
-    const user = users[userIndex];
+  useEffect(() => {
+    getData("http://localhost:3001/users")
+      .then(data => {
+        setUser(data[0]); // set initial user to first (or undefined)
+        setUsers(data);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setIsLoading(false);
+      });
+  }, [setUser]); // pass in dependency
 
-    useEffect(
-        ()=>{
-                dispatch({type: "FETCH_USERS_REQUEST"});
-                getData("http://localhost:3001/users").then(users => dispatch({
-                    type: "FETCH_USERS_SUCCESS",
-                    payload: users
-                })).catch(error => dispatch({
-                    type: "FETCH_USERS_ERROR",
-                    payload: error
-                }));
-            },[]
-        );
+  if (error) {
+    return <p>{error.message}</p>
+  }
 
-        if (error) {
-            return <p>{error.message}</p>
-        }
-        
-        if(isLoading){
-            return <p><Spinner/> Loading users...</p>
-        }
+  if (isLoading) {
+    return <p><Spinner/> Loading users...</p>
+  }
 
-        function changeUserIndex (userIndex) {
-            dispatch({
-              type: "SET_USER",
-              payload: userIndex
-            });
-          }
-    return (
-    <Fragment>
-       <div>
-       <ul className="bookables items-list-nav">
-            {users.map((u,i)=>(
-                <li key={u.id} className={i === userIndex ? "selected" : null}>
-                    <button className="btn" onClick={() => changeUserIndex(i)}>
-                        {u.name}
-                    </button>
-                </li>
-            ))}
-        </ul>
-       </div>
-        {
-            user&&(
-                <div className="booking-details">
-                    <div className="item">
-                        <div className="item-header">
-                            <h2>
-                                {user.name}
-                            </h2>
-                        </div>
-                        <div className="item-details">
-                            <h3>{user.title}</h3>
-                        </div>
-                        <p>{user.notes}</p>
-                    </div>
-                </div>
-            )
-        }
-       </Fragment>
+  // user user.id to match selection.
+  // remove the UI for user details
+  return (
+    <ul className="users items-list-nav">
+      {users.map(u => (
+        <li
+          key={u.id}
+          className={u.id === user?.id ? "selected" : null}
+        >
+          <button
+            className="btn"
+            onClick={() => setUser(u)}
+          >
+            {u.name}
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
