@@ -1,28 +1,14 @@
-import React, {useReducer, Fragment,useEffect,useRef} from 'react';
-import data from '../../static.json';
+import React, {useEffect,useRef,Fragment} from 'react';
 import {FaArrowRight} from "react-icons/fa";
 import Spinner from '../UI/Spinner';
-import reducer from "./reducer";
 import getData from '../../utils/api';
 
-let sessions=data.sessions,days=data.days;
 
-const initialState = {
-  group: "Rooms",
-  bookableIndex: 0,
-  hasDetails: true,
-  bookables:[],
-  isLoading:true,
-  error:false
-};
-
-export default function BookablesList () {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
+export default function BookablesList ({state,dispatch}) {
+  
   const {group, bookableIndex, bookables} = state;
-  const {hasDetails,error,isLoading}=state;
+  const {error,isLoading}=state;
   const bookablesInGroup = bookables.filter(b => b.group === group);
-  const bookable = bookablesInGroup[bookableIndex];
   const groups = [...new Set(bookables.map(b => b.group))];
   const timerRef = useRef(null);
   const nextButtonRef = useRef();
@@ -37,54 +23,39 @@ export default function BookablesList () {
                 type: "FETCH_BOOKABLES_ERROR",
                 payload: error
             }));
-        },[]
+        },[dispatch]
     );
-  
-    useEffect(() => {
-        timerRef.current = setInterval(() => {
-        dispatch({ type: "NEXT_BOOKABLE" });
-        }, 3000);
-        return stopPresentation;
-    }, []);
-  
-    function stopPresentation () {
-        clearInterval(timerRef.current);
+     
+
+    function changeGroup (e) {
+        dispatch({
+        type: "SET_GROUP",
+        payload: e.target.value
+        });
     }
 
-  function changeGroup (e) {
-    dispatch({
-      type: "SET_GROUP",
-      payload: e.target.value
-    });
-  }
+    function changeBookable (selectedIndex) {
+        dispatch({
+        type: "SET_BOOKABLE",
+        payload: selectedIndex
+        });
+        nextButtonRef.current.focus();
+    }
 
-  function changeBookable (selectedIndex) {
-    dispatch({
-      type: "SET_BOOKABLE",
-      payload: selectedIndex
-    });
-    nextButtonRef.current.focus();
-  }
+    function nextBookable () {
+        dispatch({type: "NEXT_BOOKABLE"});
+    }
 
-  function nextBookable () {
-    dispatch({type: "NEXT_BOOKABLE"});
-  }
+    if (error) {
+        return <p>{error.message}</p>
+    }
 
-  function toggleDetails () {
-    dispatch({type: "TOGGLE_HAS_DETAILS"});
-  }
-
-  if (error) {
-    return <p>{error.message}</p>
-  }
-
-  if(isLoading){
-    return <p><Spinner/> Loading bookables...</p>
-  }
+    if(isLoading){
+        return <p><Spinner/> Loading bookables...</p>
+    }
 
   return (
-    <Fragment>
-      <div>
+    <div>
         <select
           value={group}
           onChange={changeGroup}
@@ -119,52 +90,5 @@ export default function BookablesList () {
           </button>
         </p>
       </div>
-
-      {bookable && (
-        <div className="bookable-details">
-          <div className="item">
-            <div className="item-header">
-              <h2>
-                {bookable.title}
-              </h2>
-              <span className="controls">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={hasDetails}
-                    onChange={toggleDetails}
-                  />
-                  Show Details
-                </label>
-                <button className="btn" onClick={stopPresentation}>
-                    Stop
-                </button>
-              </span>
-            </div>
-
-            <p>{bookable.notes}</p>
-
-            {hasDetails && (
-              <div className="item-details">
-                <h3>Availability</h3>
-                <div className="bookable-availability">
-                  <ul>
-                    {bookable.days
-                      .sort()
-                      .map(d => <li key={d}>{days[d]}</li>)
-                    }
-                  </ul>
-                  <ul>
-                    {bookable.sessions
-                      .map(s => <li key={s}>{sessions[s]}</li>)
-                    }
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </Fragment>
   );
 }
