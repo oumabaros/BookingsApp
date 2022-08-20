@@ -8,8 +8,7 @@ import WeekReducer from "./weekReducer";
 export default function Bookings({bookable}){
     const [week,dispatch]=useReducer(WeekReducer,new Date(),getWeek);
     const [booking,setBooking]=useState(null);
-    console.log("DAYS: "+JSON.stringify(bookable.days));
-
+    
     return (
         <div className="bookings">
             <WeekPicker dispatch={dispatch}/>
