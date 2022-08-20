@@ -1,18 +1,34 @@
 import React,{useState, useEffect} from "react";
 import Spinner from "../UI/Spinner";
+import getData from "../../utils/api";
 
 export default function UserPicker () {
     const [users, setUsers] = useState(null);
-    useEffect(() => {
-        fetch("http://localhost:3001/users")
-        .then(resp => resp.json())
-        .then(data => setUsers(data));
-        }, []);
-        if (users === null) {
-            return <Spinner/>
-        }
+    const [isLoading, setIsLoading] = useState(true);
+    //const [error, setError] = useState(null);
 
-    return (
+    useEffect(() => {
+        getData("http://localhost:3001/users")
+            .then(data => {
+                setUsers(data);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                //setError(error);
+                setIsLoading(false);
+            });
+        }, []); 
+
+        /*if (error) {
+            return <p>{error.message}</p>
+        }*/
+        
+        if (isLoading) {
+            return <p><Spinner/> Loading users...</p>
+        }
+        
+
+        return (
             <select>
                 {
                     users.map((u)=>(
