@@ -8,7 +8,7 @@ export function getBookings(bookableId,startDate,endDate){
 
     const query=`bookableId=${bookableId}`+
                 `&date_gte=${start}&date_lte=${end}`;
-    console.log("BOOKINGS: "+JSON.stringify(`${urlRoot}?${query}`));
+    
     return getData(`${urlRoot}?${query}`);
 }
 export default function getData(url){

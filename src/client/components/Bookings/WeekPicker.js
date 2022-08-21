@@ -35,7 +35,7 @@ export default function WeekPicker ({dispatch}) {
             type="text"
             ref={textboxRef}
             placeholder="e.g. 2020-09-02"
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue="2020-06-24"
           />
 
         <button
