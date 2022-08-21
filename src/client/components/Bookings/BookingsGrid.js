@@ -6,9 +6,9 @@ import Spinner from "../UI/Spinner";
 export default function BookingsGrid({week,bookable,booking,setBooking}){
     const [bookings, setBookings] = useState(null);
     const [error, setError] = useState(false);
-   
+    
     const {grid,sessions,dates}=useMemo(
-        ()=>bookable?getGrid(bookable,week.start):{}
+        ()=>bookable ? getGrid(bookable,week.start):{}
     ,[bookable,week.start]);
         
     useEffect(()=>{
@@ -18,7 +18,7 @@ export default function BookingsGrid({week,bookable,booking,setBooking}){
             setError(false);
             setBooking(null);
 
-            getBookings(bookable.id,week.start,week.end)
+            getBookings(bookable?.id,week.start,week.end)
                 .then(resp=>{
                     if(doUpdate){
                         setBookings(transformBookings(resp));

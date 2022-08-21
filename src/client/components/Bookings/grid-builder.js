@@ -3,13 +3,12 @@ import data from '../../static.json';
 
 let sessionNames=data.sessions;
 
-export function getGrid({bookable,startDate}){
-    const dates = bookable.days.sort().map(
+export function getGrid(bookable,startDate){
+    const dates = bookable?.days.sort().map(
         d => shortISO(addDays(startDate, d))
         );
-    console.log(JSON.stringify("DATES: "+dates));
-    const sessions = bookable.sessions.map(i => sessionNames[i]);
-    console.log(JSON.stringify("SESSIONS: "+sessions));
+    
+    const sessions = bookable?.sessions.map(i => sessionNames[i]);
     const grid = {};
     sessions.forEach(
         session=>{
