@@ -18,7 +18,7 @@ export default function BookingsGrid({week,bookable,booking,setBooking}){
             setError(false);
             setBooking(null);
 
-            getBookings(bookable?.id,week.start,week.end)
+            getBookings(bookable.id,week.start,week.end)
                 .then(resp=>{
                     if(doUpdate){
                         setBookings(transformBookings(resp));
@@ -33,6 +33,16 @@ export default function BookingsGrid({week,bookable,booking,setBooking}){
     function cell(session,date){
         const cellData=bookings?.[session]?.[date]||grid[session][date];
         const isSelected=booking?.session===session && booking?.date===date;
+       
+        return (
+                <td
+                    key={date}
+                    className={isSelected ? "selected" : null}
+                    onClick={bookings ? () => setBooking(cellData) : null}
+                >
+                {cellData.title}
+                </td>
+          );
     }
 
     if(!grid){
