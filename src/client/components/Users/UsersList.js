@@ -2,11 +2,12 @@ import React,{useState, useEffect} from 'react';
 import Spinner from "../UI/Spinner";
 import getData from "../../utils/api";
 
+
 export default function UsersList ({user, setUser}) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState(null);
-
+  
   useEffect(() => {
     getData("http://localhost:3001/users")
       .then(data => {
